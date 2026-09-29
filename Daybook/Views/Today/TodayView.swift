@@ -4,24 +4,41 @@ import SwiftData
 struct TodayView: View {
     @Query(sort: \JournalEntry.createdAt, order: .reverse) private var entries: [JournalEntry]
     @Query private var reminders: [Reminder]
+    @Query private var completions: [TaskCompletion]
 
     @State private var sheet: Sheet?
 
     private enum Sheet: Identifiable {
-        case journal(prompt: String?), note, reminder
+        case journal(prompt: String?), note, reminder, closeOut
         var id: String {
             switch self {
             case .journal: "journal"
             case .note: "note"
             case .reminder: "reminder"
+            case .closeOut: "closeOut"
             }
         }
     }
 
+    /// Everything on today's plate, open items first, then by time of day.
     private var todaysReminders: [Reminder] {
         reminders
-            .filter { !$0.isCompleted && ($0.isDueToday || $0.isOverdue) }
-            .sorted { ($0.dueDate ?? .distantFuture) < ($1.dueDate ?? .distantFuture) }
+            .filter { $0.isScheduledToday || $0.isOverdue }
+            .sorted {
+                if $0.isDone != $1.isDone { return !$0.isDone }
+                if $0.isOverdue != $1.isOverdue { return $0.isOverdue }
+                return $0.minuteOfDay < $1.minuteOfDay
+            }
+    }
+
+    private var stats: ScoreStats { ScoreStats(completions: completions) }
+
+    private var closedToday: Bool {
+        entries.contains { $0.isCloseOut && Calendar.current.isDateInToday($0.createdAt) }
+    }
+
+    private var isEvening: Bool {
+        Calendar.current.component(.hour, from: .now) >= 17
     }
 
     private var wroteToday: Bool {
@@ -33,6 +50,7 @@ struct TodayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     header
+                    scoreCard
                     promptCard
                     quickActions
                     remindersSection
@@ -48,6 +66,7 @@ struct TodayView: View {
                 case .journal(let prompt): JournalEditorView(prompt: prompt)
                 case .note: NoteEditorView()
                 case .reminder: ReminderEditorView()
+                case .closeOut: CloseOutView()
                 }
             }
         }
@@ -71,6 +90,38 @@ struct TodayView: View {
         case 12..<17: "Good afternoon"
         default: "Good evening"
         }
+    }
+
+    private var scoreCard: some View {
+        HStack(alignment: .center, spacing: 16) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("TODAY'S SCORE")
+                    .font(.caption.weight(.semibold)).tracking(1.2)
+                    .foregroundStyle(.secondary)
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text("\(stats.today)")
+                        .font(.system(size: 40, weight: .semibold, design: .serif))
+                        .monospacedDigit()
+                        .contentTransition(.numericText())
+                        .animation(.snappy, value: stats.today)
+                    Text("pts")
+                        .font(Theme.serif(.body))
+                        .foregroundStyle(.secondary)
+                }
+                Text(isEvening && !closedToday ? "Ready to wrap up?" : "\(stats.thisWeek) this week")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Button {
+                sheet = .closeOut
+            } label: {
+                Label(closedToday ? "Review day" : "Close out", systemImage: closedToday ? "checkmark.seal" : "moon.stars")
+                    .font(.subheadline.weight(.semibold))
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .card()
     }
 
     private var promptCard: some View {

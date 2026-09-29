@@ -93,6 +93,11 @@ private struct JournalRow: View {
                         .font(Theme.serif(.headline))
                         .lineLimit(1)
                     Spacer()
+                    if entry.isCloseOut {
+                        Text("\(entry.points) pts")
+                            .font(.caption.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(Theme.accent)
+                    }
                     Text(entry.mood.emoji)
                 }
                 if !entry.body.isEmpty {

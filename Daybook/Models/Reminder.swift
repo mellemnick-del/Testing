@@ -3,22 +3,27 @@ import SwiftData
 
 @Model
 final class Reminder {
-    var createdAt: Date
-    var title: String
-    var notes: String
+    var createdAt: Date = Date.now
+    var title: String = ""
+    var notes: String = ""
     var dueDate: Date?
-    var isCompleted: Bool
-    var repeatRaw: String
-    var categoryRaw: String
+    /// Only used for one-off reminders. Repeating reminders are "done" when
+    /// `completedAt` falls on today, so they reset on their own each day.
+    var isCompleted: Bool = false
+    var completedAt: Date?
+    var repeatRaw: String = "never"
+    var categoryRaw: String = "personal"
+    var effortRaw: String = "medium"
     /// Stable identifier used for the scheduled local notification.
-    var notificationID: String
+    var notificationID: String = UUID().uuidString
 
     init(
         title: String = "",
         notes: String = "",
         dueDate: Date? = nil,
         repeatRule: RepeatRule = .never,
-        category: ReminderCategory = .personal
+        category: ReminderCategory = .personal,
+        effort: Effort = .medium
     ) {
         self.createdAt = .now
         self.title = title
@@ -27,6 +32,7 @@ final class Reminder {
         self.isCompleted = false
         self.repeatRaw = repeatRule.rawValue
         self.categoryRaw = category.rawValue
+        self.effortRaw = effort.rawValue
         self.notificationID = UUID().uuidString
     }
 
@@ -40,14 +46,41 @@ final class Reminder {
         set { categoryRaw = newValue.rawValue }
     }
 
-    var isOverdue: Bool {
-        guard let dueDate, !isCompleted, repeatRule == .never else { return false }
-        return dueDate < .now
+    var effort: Effort {
+        get { Effort(rawValue: effortRaw) ?? .medium }
+        set { effortRaw = newValue.rawValue }
     }
 
-    var isDueToday: Bool {
+    var isDone: Bool {
+        if repeatRule == .never { return isCompleted }
+        return completedAt.map(Calendar.current.isDateInToday) ?? false
+    }
+
+    var isOverdue: Bool {
+        guard let dueDate, !isCompleted, repeatRule == .never else { return false }
+        return dueDate < Calendar.current.startOfDay(for: .now)
+            || (Calendar.current.isDateInToday(dueDate) && dueDate < .now)
+    }
+
+    /// True when this reminder belongs on today's list, including repeats.
+    var isScheduledToday: Bool {
         guard let dueDate else { return false }
-        return Calendar.current.isDateInToday(dueDate)
+        let calendar = Calendar.current
+        let startOfTomorrow = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: .now)) ?? .now
+        guard dueDate < startOfTomorrow else { return false }
+        switch repeatRule {
+        case .never: return calendar.isDateInToday(dueDate)
+        case .daily: return true
+        case .weekdays: return !calendar.isDateInWeekend(.now)
+        case .weekly: return calendar.component(.weekday, from: dueDate) == calendar.component(.weekday, from: .now)
+        }
+    }
+
+    /// Minutes after midnight, for ordering today's list by time.
+    var minuteOfDay: Int {
+        guard let dueDate else { return .max }
+        let parts = Calendar.current.dateComponents([.hour, .minute], from: dueDate)
+        return (parts.hour ?? 0) * 60 + (parts.minute ?? 0)
     }
 }
 
@@ -77,6 +110,22 @@ enum ReminderCategory: String, CaseIterable, Identifiable {
         case .work: "briefcase"
         case .family: "house"
         case .personal: "person"
+        }
+    }
+}
+
+/// How big a task is. Sizes instead of custom numbers keep scoring effortless.
+enum Effort: String, CaseIterable, Identifiable {
+    case quick, medium, big
+
+    var id: String { rawValue }
+    var label: String { rawValue.capitalized }
+
+    var points: Int {
+        switch self {
+        case .quick: 1
+        case .medium: 3
+        case .big: 5
         }
     }
 }

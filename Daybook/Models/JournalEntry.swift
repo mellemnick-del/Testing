@@ -3,10 +3,14 @@ import SwiftData
 
 @Model
 final class JournalEntry {
-    var createdAt: Date
-    var title: String
-    var body: String
-    var moodRaw: String
+    var createdAt: Date = Date.now
+    var title: String = ""
+    var body: String = ""
+    var moodRaw: String = "good"
+    /// Set on entries written through the Evening Close-Out.
+    var isCloseOut: Bool = false
+    var points: Int = 0
+    var doneItems: [String] = []
 
     init(createdAt: Date = .now, title: String = "", body: String = "", mood: Mood = .good) {
         self.createdAt = createdAt
@@ -21,7 +25,9 @@ final class JournalEntry {
     }
 
     var displayTitle: String {
-        title.isEmpty ? createdAt.formatted(.dateTime.weekday(.wide)) : title
+        if !title.isEmpty { return title }
+        let weekday = createdAt.formatted(.dateTime.weekday(.wide))
+        return isCloseOut ? "\(weekday) close-out" : weekday
     }
 }
 

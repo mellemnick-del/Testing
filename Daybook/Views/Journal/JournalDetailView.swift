@@ -28,6 +28,33 @@ struct JournalDetailView: View {
                     .font(Theme.serif(.body))
                     .lineSpacing(6)
                     .textSelection(.enabled)
+
+                if entry.isCloseOut {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            Text("Done that day")
+                                .font(.subheadline.weight(.semibold))
+                            Spacer()
+                            Text("\(entry.points) points")
+                                .font(.subheadline.weight(.semibold).monospacedDigit())
+                                .foregroundStyle(Theme.accent)
+                        }
+                        if entry.doneItems.isEmpty {
+                            Text("A rest day.")
+                                .foregroundStyle(.secondary)
+                        } else {
+                            ForEach(Array(entry.doneItems.enumerated()), id: \.offset) { _, item in
+                                Label {
+                                    Text(item)
+                                } icon: {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(Theme.accent)
+                                }
+                            }
+                        }
+                    }
+                    .card()
+                }
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -12,6 +12,7 @@ struct ReminderEditorView: View {
     @State private var dueDate: Date
     @State private var repeatRule: RepeatRule
     @State private var category: ReminderCategory
+    @State private var effort: Effort
 
     init(reminder: Reminder? = nil, category: ReminderCategory = .personal) {
         self.reminder = reminder
@@ -21,6 +22,7 @@ struct ReminderEditorView: View {
         _dueDate = State(initialValue: reminder?.dueDate ?? Self.nextRoundHour())
         _repeatRule = State(initialValue: reminder?.repeatRule ?? .never)
         _category = State(initialValue: reminder?.category ?? category)
+        _effort = State(initialValue: reminder?.effort ?? .medium)
     }
 
     var body: some View {
@@ -39,6 +41,19 @@ struct ReminderEditorView: View {
                             Label(option.label, systemImage: option.symbol).tag(option)
                         }
                     }
+                }
+
+                Section {
+                    Picker("Effort", selection: $effort) {
+                        ForEach(Effort.allCases) { option in
+                            Text("\(option.label) +\(option.points)").tag(option)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("Points")
+                } footer: {
+                    Text("Bigger tasks earn more toward today's score.")
                 }
 
                 Section {
@@ -83,6 +98,7 @@ struct ReminderEditorView: View {
         target.dueDate = hasDate ? dueDate : nil
         target.repeatRule = hasDate ? repeatRule : .never
         target.category = category
+        target.effort = effort
         if reminder == nil { context.insert(target) }
         Task { await NotificationManager.schedule(target) }
         dismiss()

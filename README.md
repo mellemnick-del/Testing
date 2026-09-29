@@ -1,6 +1,8 @@
 # Daybook
 
-A calm, clean journal, notes, and reminders app for iPhone. Built for working professionals and everyday parents who want one simple place to write things down and not forget what matters.
+**Clear your head. Close your day.**
+
+A calm, clean journal, notes, and reminders app for iPhone, built for working professionals and everyday parents. Get things out of your head during the day, then close out the day in two minutes at night. Your journal writes itself from what you got done.
 
 > "Daybook" and the `com.zeroday.daybook` bundle ID are placeholders. Rename them in `project.yml` whenever you settle on a name.
 
@@ -8,10 +10,20 @@ A calm, clean journal, notes, and reminders app for iPhone. Built for working pr
 
 | Tab | What it does |
 | --- | --- |
-| **Today** | Greeting, a daily journaling prompt, one tap quick add (journal, note, reminder), what's due today, and your last entry. |
+| **Today** | Today's score, a daily journaling prompt, one tap quick add (journal, note, reminder), what's due today, and your last entry. |
 | **Journal** | Entries grouped by month, mood tracking with emoji, search, share, edit, delete. |
 | **Notes** | Fast plain notes with pinning, search, and swipe actions. |
-| **Reminders** | Work / Family / Personal lists, due times, repeat (daily, weekdays, weekly), local notifications. |
+| **Reminders** | Work / Family / Personal lists, due times, repeat (daily, weekdays, weekly), effort points, local notifications. |
+| **Evening Close-Out** | A three step nightly wrap-up: see what you got done and your score, roll unfinished items to tomorrow or drop them, then tap a mood and write one line. Saved to the journal with the day's points and finished tasks. |
+
+### Points
+
+Every reminder has an effort size: **Quick +1**, **Medium +3** (the default), or **Big +5**. Checking it off adds to today's score.
+
+- No streaks, so a missed day never takes anything away. Instead the close-out celebrates personal bests ("Your best Tuesday this month", "Your best day this week").
+- Weekly and all-time totals, with milestones at 50, 100, 250, 500, 1,000 and up.
+- Earned points are logged separately (`TaskCompletion`), so deleting a reminder later never lowers a past score.
+- Repeating reminders reset each day and can be earned again every time they come around.
 
 Design choices:
 - Warm "paper" background, soft white cards, sage green accent. Full dark mode.
@@ -60,7 +72,15 @@ You need a Mac for iOS development. There is no way around this one.
 7. **Screenshots**: 6.9" and 6.5" iPhone sizes. The simulator's Cmd + S works well.
 8. **Archive and upload**: Xcode, Product, Archive, then Distribute App. Test with TestFlight first.
 
-## Ideas for v2
+## Roadmap
+
+Next up:
+- One capture box that sorts anything you type into a note, reminder, or journal line (on-device AI, iOS 26)
+- Family members and a chore scoreboard with rewards ("50 points = pizza night")
+- Work mode and home mode tied to iPhone Focus
+- Nightly "time to close out" notification
+
+Later:
 
 - iCloud sync across devices (SwiftData + CloudKit)
 - Face ID lock for the journal

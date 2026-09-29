@@ -1,25 +1,27 @@
 import SwiftUI
 
 struct ReminderRow: View {
+    @Environment(\.modelContext) private var context
     @Bindable var reminder: Reminder
 
     var body: some View {
         HStack(spacing: 12) {
             Button {
-                withAnimation(.snappy) { toggle() }
+                withAnimation(.snappy) { reminder.toggleDone(in: context) }
             } label: {
-                Image(systemName: reminder.isCompleted ? "checkmark.circle.fill" : "circle")
+                Image(systemName: reminder.isDone ? "checkmark.circle.fill" : "circle")
                     .font(.title2)
-                    .foregroundStyle(reminder.isCompleted ? Theme.accent : .secondary)
+                    .foregroundStyle(reminder.isDone ? Theme.accent : .secondary)
                     .contentTransition(.symbolEffect(.replace))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(reminder.isCompleted ? "Mark incomplete" : "Mark complete")
+            .accessibilityLabel(reminder.isDone ? "Mark incomplete" : "Mark complete")
+            .sensoryFeedback(.success, trigger: reminder.isDone) { _, done in done }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(reminder.title.isEmpty ? "Untitled" : reminder.title)
-                    .strikethrough(reminder.isCompleted)
-                    .foregroundStyle(reminder.isCompleted ? .secondary : .primary)
+                    .strikethrough(reminder.isDone)
+                    .foregroundStyle(reminder.isDone ? .secondary : .primary)
                 if let due = reminder.dueDate {
                     HStack(spacing: 4) {
                         Image(systemName: reminder.category.symbol)
@@ -33,6 +35,7 @@ struct ReminderRow: View {
                 }
             }
             Spacer(minLength: 0)
+            PointsBadge(points: reminder.effort.points, earned: reminder.isDone)
         }
         .padding(.vertical, 4)
     }
@@ -42,14 +45,5 @@ struct ReminderRow: View {
             return date.formatted(date: .omitted, time: .shortened)
         }
         return date.formatted(.dateTime.weekday(.abbreviated).month().day().hour().minute())
-    }
-
-    private func toggle() {
-        reminder.isCompleted.toggle()
-        if reminder.isCompleted {
-            NotificationManager.cancel(reminder)
-        } else {
-            Task { await NotificationManager.schedule(reminder) }
-        }
     }
 }

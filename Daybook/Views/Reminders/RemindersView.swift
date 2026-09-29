@@ -16,12 +16,14 @@ struct RemindersView: View {
 
     private var open: [Reminder] {
         visible
-            .filter { !$0.isCompleted }
+            .filter { !$0.isDone }
             .sorted { ($0.dueDate ?? .distantFuture) < ($1.dueDate ?? .distantFuture) }
     }
 
     private var completed: [Reminder] {
-        visible.filter(\.isCompleted).sorted { $0.createdAt > $1.createdAt }
+        visible
+            .filter(\.isDone)
+            .sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }
     }
 
     var body: some View {
