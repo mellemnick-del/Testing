@@ -30,4 +30,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     ) async -> UNNotificationPresentationOptions {
         [.banner, .sound, .list]
     }
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse
+    ) async {
+        guard response.notification.request.identifier == NotificationManager.closeOutID else { return }
+        await MainActor.run { AppRouter.shared.openCloseOut() }
+    }
 }

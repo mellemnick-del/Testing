@@ -10,11 +10,21 @@ A calm, clean journal, notes, and reminders app for iPhone, built for working pr
 
 | Tab | What it does |
 | --- | --- |
-| **Today** | Today's score, a daily journaling prompt, one tap quick add (journal, note, reminder), what's due today, and your last entry. |
+| **Today** | Capture box, today's score, a daily journaling prompt, one tap quick add, what's due today, and your last entry. |
+| **Capture** | One box for anything on your mind. Type or dictate, and Daybook files it as a reminder (with date, list, and points), a note, or a journal line. You can switch the type before saving. |
 | **Journal** | Entries grouped by month, mood tracking with emoji, search, share, edit, delete. |
 | **Notes** | Fast plain notes with pinning, search, and swipe actions. |
 | **Reminders** | Work / Family / Personal lists, due times, repeat (daily, weekdays, weekly), effort points, local notifications. |
 | **Evening Close-Out** | A three step nightly wrap-up: see what you got done and your score, roll unfinished items to tomorrow or drop them, then tap a mood and write one line. Saved to the journal with the day's points and finished tasks. |
+
+### How capture sorts things
+
+A built-in rule parser runs instantly and offline on every supported iPhone:
+- Dates and times come from Apple's date detector ("Friday at 5", "tomorrow morning", "by the 15th"). A bare day defaults to 9 AM, and "at 3" means 3 PM.
+- Task verbs and phrases like "remind me to" or "don't forget" make a reminder. Feelings and reflections ("today was", "proud", "exhausted") make a journal line. Anything else becomes a note.
+- Keywords pick the list (Work, Family, Personal), the effort size, and the journal mood.
+
+On iOS 26 devices with Apple Intelligence, the on-device model takes a second look after you pause typing. It's free, private, and needs no internet. Dates still come from the rule parser, which is more reliable for them.
 
 ### Points
 
@@ -22,6 +32,7 @@ Every reminder has an effort size: **Quick +1**, **Medium +3** (the default), or
 
 - No streaks, so a missed day never takes anything away. Instead the close-out celebrates personal bests ("Your best Tuesday this month", "Your best day this week").
 - Weekly and all-time totals, with milestones at 50, 100, 250, 500, 1,000 and up.
+- A nightly close-out reminder (Settings, default 8:30 PM) opens straight into the close-out when tapped.
 - Earned points are logged separately (`TaskCompletion`), so deleting a reminder later never lowers a past score.
 - Repeating reminders reset each day and can be earned again every time they come around.
 
@@ -75,10 +86,8 @@ You need a Mac for iOS development. There is no way around this one.
 ## Roadmap
 
 Next up:
-- One capture box that sorts anything you type into a note, reminder, or journal line (on-device AI, iOS 26)
 - Family members and a chore scoreboard with rewards ("50 points = pizza night")
 - Work mode and home mode tied to iPhone Focus
-- Nightly "time to close out" notification
 
 Later:
 
@@ -88,5 +97,4 @@ Later:
 - Photos in journal entries
 - Shared family reminder lists
 - Mood trends over time with Swift Charts
-- Daily "time to journal" nudge
 - Premium tier via StoreKit subscriptions

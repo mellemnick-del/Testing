@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct TodayView: View {
+    @Environment(AppRouter.self) private var router
     @Query(sort: \JournalEntry.createdAt, order: .reverse) private var entries: [JournalEntry]
     @Query private var reminders: [Reminder]
     @Query private var completions: [TaskCompletion]
@@ -9,9 +10,11 @@ struct TodayView: View {
     @State private var sheet: Sheet?
 
     private enum Sheet: Identifiable {
-        case journal(prompt: String?), note, reminder, closeOut
+        case journal(prompt: String?), note, reminder, closeOut, capture, settings
         var id: String {
             switch self {
+            case .capture: "capture"
+            case .settings: "settings"
             case .journal: "journal"
             case .note: "note"
             case .reminder: "reminder"
@@ -50,6 +53,7 @@ struct TodayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     header
+                    captureBar
                     scoreCard
                     promptCard
                     quickActions
@@ -67,8 +71,22 @@ struct TodayView: View {
                 case .note: NoteEditorView()
                 case .reminder: ReminderEditorView()
                 case .closeOut: CloseOutView()
+                case .capture: CaptureView()
+                case .settings: SettingsView()
                 }
             }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        sheet = .settings
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                    .accessibilityLabel("Settings")
+                }
+            }
+            .onAppear(perform: handleCloseOutRequest)
+            .onChange(of: router.closeOutRequested) { handleCloseOutRequest() }
         }
     }
 
@@ -90,6 +108,37 @@ struct TodayView: View {
         case 12..<17: "Good afternoon"
         default: "Good evening"
         }
+    }
+
+    private func handleCloseOutRequest() {
+        guard router.closeOutRequested else { return }
+        router.closeOutRequested = false
+        sheet = .closeOut
+    }
+
+    private var captureBar: some View {
+        Button {
+            sheet = .capture
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(Theme.accent)
+                Text("What's on your mind?")
+                    .font(Theme.serif(.body))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Image(systemName: "plus.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(Theme.accent)
+            }
+            .padding(.leading, 16)
+            .padding(.trailing, 10)
+            .padding(.vertical, 10)
+            .background(Theme.card, in: Capsule())
+            .shadow(color: .black.opacity(0.05), radius: 8, y: 2)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Capture a thought, task, or note")
     }
 
     private var scoreCard: some View {
@@ -213,5 +262,6 @@ private struct QuickAction: View {
 
 #Preview {
     TodayView()
+        .environment(AppRouter.shared)
         .modelContainer(PreviewData.container)
 }

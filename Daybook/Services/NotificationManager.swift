@@ -6,6 +6,8 @@ import UserNotifications
 /// not at launch, which App Review and users both prefer.
 @MainActor
 enum NotificationManager {
+    nonisolated static let closeOutID = "daybook.closeout"
+
     private static var center: UNUserNotificationCenter { .current() }
 
     @discardableResult
@@ -66,5 +68,30 @@ enum NotificationManager {
     static func cancel(_ reminder: Reminder) {
         let ids = [reminder.notificationID] + (2...6).map { "\(reminder.notificationID)-\($0)" }
         center.removePendingNotificationRequests(withIdentifiers: ids)
+    }
+
+    // MARK: Nightly close-out nudge
+
+    /// Repeats every day at the given time. Returns false if notifications are off.
+    @discardableResult
+    static func scheduleCloseOutNudge(minutesAfterMidnight minutes: Int) async -> Bool {
+        guard await requestAuthorization() else { return false }
+        cancelCloseOutNudge()
+
+        let content = UNMutableNotificationContent()
+        content.title = "Close out your day"
+        content.body = "Two minutes: see your score, clear what's left, and write one line."
+        content.sound = .default
+
+        var parts = DateComponents()
+        parts.hour = minutes / 60
+        parts.minute = minutes % 60
+        let trigger = UNCalendarNotificationTrigger(dateMatching: parts, repeats: true)
+        try? await center.add(.init(identifier: closeOutID, content: content, trigger: trigger))
+        return true
+    }
+
+    static func cancelCloseOutNudge() {
+        center.removePendingNotificationRequests(withIdentifiers: [closeOutID])
     }
 }
