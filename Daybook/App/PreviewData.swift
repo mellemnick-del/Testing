@@ -7,7 +7,7 @@ enum PreviewData {
     static let container: ModelContainer = {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try! ModelContainer(
-            for: JournalEntry.self, Note.self, Reminder.self, TaskCompletion.self,
+            for: JournalEntry.self, Note.self, Reminder.self, TaskCompletion.self, FamilyMember.self, Reward.self,
             configurations: config
         )
         let context = container.mainContext
@@ -34,6 +34,23 @@ enum PreviewData {
         for reminder in [fieldTrip, update, garage, expenses, callMom] { context.insert(reminder) }
         update.markDone(in: context)
         garage.markDone(in: context)
+
+        // Family
+        let emma = FamilyMember(name: "Emma", color: .pink)
+        let jake = FamilyMember(name: "Jake", color: .blue)
+        context.insert(emma)
+        context.insert(jake)
+        let bed = Reminder(title: "Make bed", dueDate: .now, repeatRule: .daily, category: .family, effort: .quick, assigneeID: emma.memberID)
+        let dishes = Reminder(title: "Unload dishwasher", dueDate: .now, repeatRule: .daily, category: .family, assigneeID: emma.memberID)
+        let lawn = Reminder(title: "Mow the lawn", dueDate: .now, category: .family, effort: .big, assigneeID: jake.memberID)
+        let trash = Reminder(title: "Take out the trash", dueDate: .now, category: .family, effort: .quick, assigneeID: jake.memberID)
+        for chore in [bed, dishes, lawn, trash] { context.insert(chore) }
+        bed.markDone(in: context)
+        lawn.markDone(in: context)
+        let pizza = Reward(title: "Pizza night", cost: 100)
+        pizza.startedAt = Calendar.current.date(byAdding: .day, value: -5, to: .now) ?? .now
+        context.insert(pizza)
+        context.insert(Reward(title: "Pick Friday's movie", cost: 30, memberID: jake.memberID))
 
         // A few past days of points so personal bests have history.
         let history: [(daysAgo: Int, points: [Int])] = [(1, [3, 3, 1]), (2, [5, 3]), (3, [1, 1, 3]), (7, [3, 5])]

@@ -26,7 +26,7 @@ struct TodayView: View {
     /// Everything on today's plate, open items first, then by time of day.
     private var todaysReminders: [Reminder] {
         reminders
-            .filter { $0.isScheduledToday || $0.isOverdue }
+            .filter { $0.assigneeID == nil && ($0.isScheduledToday || $0.isOverdue) }
             .sorted {
                 if $0.isDone != $1.isDone { return !$0.isDone }
                 if $0.isOverdue != $1.isOverdue { return $0.isOverdue }
@@ -34,7 +34,7 @@ struct TodayView: View {
             }
     }
 
-    private var stats: ScoreStats { ScoreStats(completions: completions) }
+    private var stats: ScoreStats { ScoreStats(completions: completions.mine) }
 
     private var closedToday: Bool {
         entries.contains { $0.isCloseOut && Calendar.current.isDateInToday($0.createdAt) }

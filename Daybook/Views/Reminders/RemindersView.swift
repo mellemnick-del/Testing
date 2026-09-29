@@ -4,6 +4,7 @@ import SwiftData
 struct RemindersView: View {
     @Environment(\.modelContext) private var context
     @Query private var reminders: [Reminder]
+    @Query private var members: [FamilyMember]
 
     @State private var filter: ReminderCategory?
     @State private var isCreating = false
@@ -78,7 +79,7 @@ struct RemindersView: View {
     @ViewBuilder
     private func rows(_ items: [Reminder]) -> some View {
         ForEach(items) { reminder in
-            ReminderRow(reminder: reminder)
+            ReminderRow(reminder: reminder, assignee: members.first { $0.memberID == reminder.assigneeID })
                 .contentShape(Rectangle())
                 .onTapGesture { editing = reminder }
                 .listRowBackground(Theme.card)

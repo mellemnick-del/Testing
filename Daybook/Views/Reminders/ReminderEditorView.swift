@@ -1,8 +1,10 @@
 import SwiftUI
+import SwiftData
 
 struct ReminderEditorView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Query(sort: \FamilyMember.createdAt) private var members: [FamilyMember]
 
     private let reminder: Reminder?
 
@@ -13,8 +15,9 @@ struct ReminderEditorView: View {
     @State private var repeatRule: RepeatRule
     @State private var category: ReminderCategory
     @State private var effort: Effort
+    @State private var assigneeID: String?
 
-    init(reminder: Reminder? = nil, category: ReminderCategory = .personal) {
+    init(reminder: Reminder? = nil, category: ReminderCategory = .personal, assigneeID: String? = nil) {
         self.reminder = reminder
         _title = State(initialValue: reminder?.title ?? "")
         _notes = State(initialValue: reminder?.notes ?? "")
@@ -23,6 +26,7 @@ struct ReminderEditorView: View {
         _repeatRule = State(initialValue: reminder?.repeatRule ?? .never)
         _category = State(initialValue: reminder?.category ?? category)
         _effort = State(initialValue: reminder?.effort ?? .medium)
+        _assigneeID = State(initialValue: reminder?.assigneeID ?? assigneeID)
     }
 
     var body: some View {
@@ -39,6 +43,14 @@ struct ReminderEditorView: View {
                     Picker("List", selection: $category) {
                         ForEach(ReminderCategory.allCases) { option in
                             Label(option.label, systemImage: option.symbol).tag(option)
+                        }
+                    }
+                    if !members.isEmpty {
+                        Picker("Assigned to", selection: $assigneeID) {
+                            Text("Me").tag(String?.none)
+                            ForEach(members) { member in
+                                Text(member.name).tag(Optional(member.memberID))
+                            }
                         }
                     }
                 }
@@ -75,7 +87,7 @@ struct ReminderEditorView: View {
                 }
             }
             .paperBackground()
-            .navigationTitle(reminder == nil ? "New Reminder" : "Edit Reminder")
+            .navigationTitle(reminder == nil ? (assigneeID == nil ? "New Reminder" : "New Chore") : "Edit Reminder")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -99,6 +111,7 @@ struct ReminderEditorView: View {
         target.repeatRule = hasDate ? repeatRule : .never
         target.category = category
         target.effort = effort
+        target.assigneeID = assigneeID
         if reminder == nil { context.insert(target) }
         Task { await NotificationManager.schedule(target) }
         dismiss()

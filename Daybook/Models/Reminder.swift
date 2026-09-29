@@ -14,6 +14,8 @@ final class Reminder {
     var repeatRaw: String = "never"
     var categoryRaw: String = "personal"
     var effortRaw: String = "medium"
+    /// The `FamilyMember.memberID` this is assigned to, or `nil` for you.
+    var assigneeID: String?
     /// Stable identifier used for the scheduled local notification.
     var notificationID: String = UUID().uuidString
 
@@ -23,7 +25,8 @@ final class Reminder {
         dueDate: Date? = nil,
         repeatRule: RepeatRule = .never,
         category: ReminderCategory = .personal,
-        effort: Effort = .medium
+        effort: Effort = .medium,
+        assigneeID: String? = nil
     ) {
         self.createdAt = .now
         self.title = title
@@ -33,6 +36,7 @@ final class Reminder {
         self.repeatRaw = repeatRule.rawValue
         self.categoryRaw = category.rawValue
         self.effortRaw = effort.rawValue
+        self.assigneeID = assigneeID
         self.notificationID = UUID().uuidString
     }
 

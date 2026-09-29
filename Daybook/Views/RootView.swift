@@ -17,6 +17,9 @@ struct RootView: View {
             RemindersView()
                 .tabItem { Label("Reminders", systemImage: "checklist") }
                 .tag(AppRouter.Tab.reminders)
+            FamilyView()
+                .tabItem { Label("Family", systemImage: "house") }
+                .tag(AppRouter.Tab.family)
         }
         .environment(router)
     }

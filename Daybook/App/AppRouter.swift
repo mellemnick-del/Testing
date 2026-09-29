@@ -7,7 +7,7 @@ final class AppRouter {
     static let shared = AppRouter()
 
     enum Tab: Hashable {
-        case today, journal, notes, reminders
+        case today, journal, notes, reminders, family
     }
 
     var tab: Tab = .today

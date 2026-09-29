@@ -10,7 +10,7 @@ struct DaybookApp: App {
         WindowGroup {
             RootView()
         }
-        .modelContainer(for: [JournalEntry.self, Note.self, Reminder.self, TaskCompletion.self])
+        .modelContainer(for: [JournalEntry.self, Note.self, Reminder.self, TaskCompletion.self, FamilyMember.self, Reward.self])
     }
 }
 

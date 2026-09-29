@@ -20,17 +20,24 @@ struct CloseOutView: View {
         case done, leftover, reflect
     }
 
-    private var stats: ScoreStats { ScoreStats(completions: completions) }
+    private var stats: ScoreStats { ScoreStats(completions: completions.mine) }
+
+    /// Points family members earned today, shown as a bonus line.
+    private var familyToday: Int {
+        completions
+            .filter { $0.assigneeID != nil && Calendar.current.isDateInToday($0.completedAt) }
+            .reduce(0) { $0 + $1.points }
+    }
 
     private var todaysCompletions: [TaskCompletion] {
-        completions.filter { Calendar.current.isDateInToday($0.completedAt) }
+        completions.mine.filter { Calendar.current.isDateInToday($0.completedAt) }
     }
 
     /// One-off reminders due today or earlier that didn't get done.
     /// Repeating reminders reset on their own, so they never pile up here.
     private var leftovers: [Reminder] {
         reminders
-            .filter { !$0.isDone && $0.repeatRule == .never && ($0.isScheduledToday || $0.isOverdue) }
+            .filter { $0.assigneeID == nil && !$0.isDone && $0.repeatRule == .never && ($0.isScheduledToday || $0.isOverdue) }
             .sorted { ($0.dueDate ?? .distantPast) < ($1.dueDate ?? .distantPast) }
     }
 
@@ -117,6 +124,12 @@ struct CloseOutView: View {
                 }
             }
             .card()
+
+            if familyToday > 0 {
+                Label("Your family earned \(familyToday) points on chores today.", systemImage: "house")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.accent)
+            }
 
             HStack(spacing: 12) {
                 StatTile(value: stats.thisWeek, label: "This week")

@@ -1,10 +1,12 @@
 import SwiftUI
+import SwiftData
 
 /// One box for anything on your mind. Daybook decides whether it's a
 /// reminder, a note, or a journal line, and you can switch it before saving.
 struct CaptureView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Query(sort: \FamilyMember.createdAt) private var members: [FamilyMember]
 
     @State private var text = ""
     @State private var result = CaptureResult()
@@ -15,6 +17,15 @@ struct CaptureView: View {
 
     private var trimmed: String { text.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var kind: CaptureKind { chosenKind ?? result.kind }
+
+    private var assignee: FamilyMember? {
+        guard let name = result.assigneeName else { return nil }
+        return members.first { $0.name == name }
+    }
+
+    private func parse(_ text: String) -> CaptureResult {
+        CaptureParser.parse(text, memberNames: members.map(\.name))
+    }
 
     private var kindSelection: Binding<CaptureKind> {
         Binding { kind } set: { chosenKind = $0 }
@@ -127,7 +138,14 @@ struct CaptureView: View {
                 } else {
                     Label("No time set", systemImage: "calendar")
                 }
-                Label(result.category.label, systemImage: result.category.symbol)
+                if let assignee {
+                    HStack(spacing: 4) {
+                        MemberAvatar(member: assignee, size: 16)
+                        Text("For \(assignee.name)")
+                    }
+                } else {
+                    Label(result.category.label, systemImage: result.category.symbol)
+                }
             }
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -164,7 +182,7 @@ struct CaptureView: View {
         let snapshot = text
         try? await Task.sleep(for: .milliseconds(200))
         guard !Task.isCancelled else { return }
-        withAnimation(.snappy) { result = CaptureParser.parse(snapshot) }
+        withAnimation(.snappy) { result = parse(snapshot) }
         parsedText = snapshot
 
         // Let the on-device model take a second look once typing pauses.
@@ -177,15 +195,16 @@ struct CaptureView: View {
 
     private func save() {
         guard !trimmed.isEmpty else { return }
-        if parsedText != text { result = CaptureParser.parse(text) }
+        if parsedText != text { result = parse(text) }
 
         switch kind {
         case .reminder:
             let reminder = Reminder(
                 title: result.title.isEmpty ? trimmed : result.title,
                 dueDate: result.dueDate,
-                category: result.category,
-                effort: result.effort
+                category: assignee == nil ? result.category : .family,
+                effort: result.effort,
+                assigneeID: assignee?.memberID
             )
             context.insert(reminder)
             if reminder.dueDate != nil {

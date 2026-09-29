@@ -15,6 +15,7 @@ A calm, clean journal, notes, and reminders app for iPhone, built for working pr
 | **Journal** | Entries grouped by month, mood tracking with emoji, search, share, edit, delete. |
 | **Notes** | Fast plain notes with pinning, search, and swipe actions. |
 | **Reminders** | Work / Family / Personal lists, due times, repeat (daily, weekdays, weekly), effort points, local notifications. |
+| **Family** | Add family members, assign chores with points, a weekly scoreboard (with a crown for the leader), and rewards like "100 points = pizza night" for one person or the whole family. |
 | **Evening Close-Out** | A three step nightly wrap-up: see what you got done and your score, roll unfinished items to tomorrow or drop them, then tap a mood and write one line. Saved to the journal with the day's points and finished tasks. |
 
 ### How capture sorts things
@@ -25,6 +26,15 @@ A built-in rule parser runs instantly and offline on every supported iPhone:
 - Keywords pick the list (Work, Family, Personal), the effort size, and the journal mood.
 
 On iOS 26 devices with Apple Intelligence, the on-device model takes a second look after you pause typing. It's free, private, and needs no internet. Dates still come from the rule parser, which is more reliable for them.
+
+### Family chores
+
+- Family members have a name and a color. "You" is built in, so anything unassigned is yours.
+- Any reminder can be assigned to someone, which makes it a chore. Chores show that person's avatar in the Reminders list.
+- Your score (Today and the Evening Close-Out) counts only your own tasks. The close-out adds a line about what the family earned.
+- Rewards count points earned after they're set up. When a reward is reached, tap Claim, then Start again for weekly treats.
+- Capture understands names: "Jake, mow the lawn Saturday" becomes a Saturday chore for Jake.
+- Everything runs on one phone for now. Kids don't need devices or accounts.
 
 ### Points
 
@@ -86,8 +96,8 @@ You need a Mac for iOS development. There is no way around this one.
 ## Roadmap
 
 Next up:
-- Family members and a chore scoreboard with rewards ("50 points = pizza night")
 - Work mode and home mode tied to iPhone Focus
+- Family sharing through iCloud so kids can check off chores on their own devices
 
 Later:
 
@@ -95,6 +105,5 @@ Later:
 - Face ID lock for the journal
 - Home Screen and Lock Screen widgets (today's prompt, next reminder)
 - Photos in journal entries
-- Shared family reminder lists
 - Mood trends over time with Swift Charts
 - Premium tier via StoreKit subscriptions

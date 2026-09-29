@@ -10,6 +10,8 @@ final class TaskCompletion {
     var categoryRaw: String = "personal"
     var completedAt: Date = Date.now
     var reminderID: String = ""
+    /// Who earned the points. `nil` is you.
+    var assigneeID: String?
 
     init(reminder: Reminder, at date: Date = .now) {
         self.title = reminder.title
@@ -17,5 +19,11 @@ final class TaskCompletion {
         self.categoryRaw = reminder.categoryRaw
         self.completedAt = date
         self.reminderID = reminder.notificationID
+        self.assigneeID = reminder.assigneeID
     }
+}
+
+extension Array where Element == TaskCompletion {
+    /// Points you earned yourself, as opposed to family members.
+    var mine: [TaskCompletion] { filter { $0.assigneeID == nil } }
 }

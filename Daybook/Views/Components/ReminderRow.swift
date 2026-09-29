@@ -3,6 +3,8 @@ import SwiftUI
 struct ReminderRow: View {
     @Environment(\.modelContext) private var context
     @Bindable var reminder: Reminder
+    /// Shown as a small avatar when the reminder is someone else's chore.
+    var assignee: FamilyMember? = nil
 
     var body: some View {
         HStack(spacing: 12) {
@@ -35,6 +37,9 @@ struct ReminderRow: View {
                 }
             }
             Spacer(minLength: 0)
+            if let assignee {
+                MemberAvatar(member: assignee, size: 24)
+            }
             PointsBadge(points: reminder.effort.points, earned: reminder.isDone)
         }
         .padding(.vertical, 4)

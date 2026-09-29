@@ -22,16 +22,26 @@ struct CaptureResult: Equatable {
     var category: ReminderCategory = .personal
     var effort: Effort = .medium
     var mood: Mood = .good
+    /// A family member's name found in the text, for assigning chores.
+    var assigneeName: String?
 }
 
 /// Sorts free-form text into a reminder, note, or journal line.
 /// Runs instantly and offline on every iOS version. `SmartCapture` can
 /// refine the result with Apple's on-device model where it's available.
 enum CaptureParser {
-    static func parse(_ raw: String, now: Date = .now) -> CaptureResult {
-        let text = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    static func parse(_ raw: String, memberNames: [String] = []) -> CaptureResult {
+        var text = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         var result = CaptureResult()
         guard !text.isEmpty else { return result }
+
+        // "Jake, mow the lawn Saturday" is a chore for Jake.
+        let named = findMember(in: text, names: memberNames)
+        result.assigneeName = named.name
+        if named.leading, let name = named.name {
+            text = String(text.dropFirst(name.count)).trimmingCharacters(in: CharacterSet(charactersIn: " ,:-"))
+            if text.lowercased().hasPrefix("to ") { text = String(text.dropFirst(3)) }
+        }
         let lower = text.lowercased()
 
         let detected = detectDate(in: text)
@@ -42,7 +52,7 @@ enum CaptureParser {
         let taskLike = startsLikeTask(lower)
         if soundsLikeJournal(lower) && !taskLike {
             result.kind = .journal
-        } else if detected.date != nil || taskLike {
+        } else if detected.date != nil || taskLike || named.leading {
             result.kind = .reminder
         } else {
             result.kind = .note
@@ -52,6 +62,24 @@ enum CaptureParser {
         result.dueDate = detected.date
         result.title = cleanTitle(text, removing: detected.range)
         return result
+    }
+
+    // MARK: Family
+
+    /// Finds a family member's name as a whole word. `leading` is true when
+    /// the text starts with it, which reads as an instruction to that person.
+    static func findMember(in text: String, names: [String]) -> (name: String?, leading: Bool) {
+        let lower = text.lowercased()
+        let words = Set(lower.split(whereSeparator: { !$0.isLetter && $0 != "'" }).map { $0.replacingOccurrences(of: "'s", with: "") })
+        for name in names where !name.isEmpty {
+            let lowerName = name.lowercased()
+            if lower.hasPrefix(lowerName) {
+                let next = lower.dropFirst(lowerName.count).first
+                if next == nil || next == " " || next == "," || next == ":" { return (name, true) }
+            }
+            if words.contains(lowerName) { return (name, false) }
+        }
+        return (nil, false)
     }
 
     // MARK: Dates
