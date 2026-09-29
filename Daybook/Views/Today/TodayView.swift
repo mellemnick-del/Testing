@@ -23,10 +23,20 @@ struct TodayView: View {
         }
     }
 
+    private var mode: AppMode? { ModeController.shared.mode }
+
+    private var allTodays: [Reminder] {
+        reminders.filter { $0.assigneeID == nil && ($0.isScheduledToday || $0.isOverdue) }
+    }
+
+    private var hiddenWorkCount: Int {
+        allTodays.filter { !$0.isDone && !$0.isVisible(in: mode) }.count
+    }
+
     /// Everything on today's plate, open items first, then by time of day.
     private var todaysReminders: [Reminder] {
-        reminders
-            .filter { $0.assigneeID == nil && ($0.isScheduledToday || $0.isOverdue) }
+        allTodays
+            .filter { $0.isVisible(in: mode) }
             .sorted {
                 if $0.isDone != $1.isDone { return !$0.isDone }
                 if $0.isOverdue != $1.isOverdue { return $0.isOverdue }
@@ -98,6 +108,8 @@ struct TodayView: View {
                 .foregroundStyle(.secondary)
             Text(greeting)
                 .font(Theme.serif(.largeTitle, weight: .semibold))
+            ModePill()
+                .padding(.top, 4)
         }
         .padding(.top, 8)
     }
@@ -204,8 +216,16 @@ struct TodayView: View {
 
     private var remindersSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("On deck")
-                .font(Theme.serif(.title3, weight: .semibold))
+            HStack(alignment: .firstTextBaseline) {
+                Text("On deck")
+                    .font(Theme.serif(.title3, weight: .semibold))
+                Spacer()
+                if hiddenWorkCount > 0 {
+                    Label("\(hiddenWorkCount) work hidden", systemImage: "briefcase")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
             VStack(alignment: .leading, spacing: 0) {
                 if todaysReminders.isEmpty {
                     Text("Nothing due today. Enjoy the quiet.")

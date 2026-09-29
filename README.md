@@ -16,6 +16,7 @@ A calm, clean journal, notes, and reminders app for iPhone, built for working pr
 | **Notes** | Fast plain notes with pinning, search, and swipe actions. |
 | **Reminders** | Work / Family / Personal lists, due times, repeat (daily, weekdays, weekly), effort points, local notifications. |
 | **Family** | Add family members, assign chores with points, a weekly scoreboard (with a crown for the leader), and rewards like "100 points = pizza night" for one person or the whole family. |
+| **Work and home modes** | During work hours you're in Work mode. After hours, Home mode hides work reminders so work stays at work. Switch by schedule, by iPhone Focus, or with one tap. |
 | **Evening Close-Out** | A three step nightly wrap-up: see what you got done and your score, roll unfinished items to tomorrow or drop them, then tap a mood and write one line. Saved to the journal with the day's points and finished tasks. |
 
 ### How capture sorts things
@@ -35,6 +36,13 @@ On iOS 26 devices with Apple Intelligence, the on-device model takes a second lo
 - Rewards count points earned after they're set up. When a reward is reached, tap Claim, then Start again for weekly treats.
 - Capture understands names: "Jake, mow the lawn Saturday" becomes a Saturday chore for Jake.
 - Everything runs on one phone for now. Kids don't need devices or accounts.
+
+### Work and home modes
+
+- Set work hours and workdays in Settings (default Monday to Friday, 8:00 AM to 5:30 PM). Outside them, Today and the Reminders "All" list hide work items, with a one-tap Show.
+- The mode pill on Today ("Home mode · until 8:00 AM") switches modes until the next scheduled change.
+- iPhone Focus: in Settings > Focus, add a Daybook filter to any Focus and pick Work or Home. While that Focus is on, Daybook uses that mode, and a Home filter silences work reminder notifications. Each notification carries its list as `filterCriteria` for this.
+- Priority: manual switch, then Focus, then work hours.
 
 ### Points
 
@@ -96,7 +104,6 @@ You need a Mac for iOS development. There is no way around this one.
 ## Roadmap
 
 Next up:
-- Work mode and home mode tied to iPhone Focus
 - Family sharing through iCloud so kids can check off chores on their own devices
 
 Later:

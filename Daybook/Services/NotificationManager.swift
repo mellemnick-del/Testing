@@ -32,6 +32,8 @@ enum NotificationManager {
         content.title = reminder.title.isEmpty ? "Reminder" : reminder.title
         if !reminder.notes.isEmpty { content.body = reminder.notes }
         content.sound = .default
+        // Lets a Daybook Focus filter silence work reminders at home.
+        content.filterCriteria = reminder.categoryRaw
 
         let calendar = Calendar.current
         var requests: [UNNotificationRequest] = []
@@ -82,6 +84,7 @@ enum NotificationManager {
         content.title = "Close out your day"
         content.body = "Two minutes: see your score, clear what's left, and write one line."
         content.sound = .default
+        content.filterCriteria = ReminderCategory.personal.rawValue
 
         var parts = DateComponents()
         parts.hour = minutes / 60

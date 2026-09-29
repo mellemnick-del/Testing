@@ -11,8 +11,19 @@ struct RemindersView: View {
     @State private var editing: Reminder?
     @State private var showCompleted = false
 
+    @State private var showWorkAtHome = false
+
+    private var mode: AppMode? { ModeController.shared.mode }
+
+    /// In Home mode the "All" list leaves out work, unless you ask to see it.
+    private var hidesWork: Bool { mode == .home && filter == nil && !showWorkAtHome }
+
     private var visible: [Reminder] {
-        reminders.filter { filter == nil || $0.category == filter }
+        reminders.filter { (filter == nil || $0.category == filter) && (!hidesWork || $0.category != .work) }
+    }
+
+    private var hiddenWorkCount: Int {
+        hidesWork ? reminders.filter { $0.category == .work && !$0.isDone }.count : 0
     }
 
     private var open: [Reminder] {
@@ -40,6 +51,20 @@ struct RemindersView: View {
                     .pickerStyle(.segmented)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets())
+                }
+
+                if hiddenWorkCount > 0 {
+                    Section {
+                        HStack {
+                            Label("Home mode: \(hiddenWorkCount) work \(hiddenWorkCount == 1 ? "item" : "items") hidden", systemImage: "house.fill")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Button("Show") { withAnimation { showWorkAtHome = true } }
+                                .font(.subheadline.weight(.semibold))
+                        }
+                    }
+                    .listRowBackground(Theme.card)
                 }
 
                 if open.isEmpty {
