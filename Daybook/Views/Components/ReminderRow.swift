@@ -1,0 +1,55 @@
+import SwiftUI
+
+struct ReminderRow: View {
+    @Bindable var reminder: Reminder
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button {
+                withAnimation(.snappy) { toggle() }
+            } label: {
+                Image(systemName: reminder.isCompleted ? "checkmark.circle.fill" : "circle")
+                    .font(.title2)
+                    .foregroundStyle(reminder.isCompleted ? Theme.accent : .secondary)
+                    .contentTransition(.symbolEffect(.replace))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(reminder.isCompleted ? "Mark incomplete" : "Mark complete")
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(reminder.title.isEmpty ? "Untitled" : reminder.title)
+                    .strikethrough(reminder.isCompleted)
+                    .foregroundStyle(reminder.isCompleted ? .secondary : .primary)
+                if let due = reminder.dueDate {
+                    HStack(spacing: 4) {
+                        Image(systemName: reminder.category.symbol)
+                        Text(dueText(due))
+                        if reminder.repeatRule != .never {
+                            Image(systemName: "repeat")
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundStyle(reminder.isOverdue ? .red : .secondary)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func dueText(_ date: Date) -> String {
+        if reminder.repeatRule != .never || Calendar.current.isDateInToday(date) {
+            return date.formatted(date: .omitted, time: .shortened)
+        }
+        return date.formatted(.dateTime.weekday(.abbreviated).month().day().hour().minute())
+    }
+
+    private func toggle() {
+        reminder.isCompleted.toggle()
+        if reminder.isCompleted {
+            NotificationManager.cancel(reminder)
+        } else {
+            Task { await NotificationManager.schedule(reminder) }
+        }
+    }
+}
