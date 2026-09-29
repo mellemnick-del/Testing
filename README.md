@@ -104,6 +104,7 @@ You need a Mac for iOS development. There is no way around this one.
 ## Roadmap
 
 Next up:
+- Send gratitude: write a thank-you to a family member or anyone, share it as a card through Messages or email (no accounts needed), show it on a family gratitude wall, and optionally add bonus points. In-app delivery between Tuck users could follow with family sharing.
 - Family sharing through iCloud so kids can check off chores on their own devices
 
 Later:
