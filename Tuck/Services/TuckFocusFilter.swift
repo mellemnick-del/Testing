@@ -1,11 +1,11 @@
 import AppIntents
 import Foundation
 
-/// Lets people add Daybook to an iPhone Focus (Settings > Focus > Add Filter).
-/// When that Focus turns on, Daybook switches to the chosen mode and only
+/// Lets people add Tuck to an iPhone Focus (Settings > Focus > Add Filter).
+/// When that Focus turns on, Tuck switches to the chosen mode and only
 /// matching reminder notifications come through.
-struct DaybookFocusFilter: SetFocusFilterIntent {
-    static var title: LocalizedStringResource = "Set Daybook mode"
+struct TuckFocusFilter: SetFocusFilterIntent {
+    static var title: LocalizedStringResource = "Set Tuck mode"
     static var description: IntentDescription? = "Show work or home reminders while this Focus is on."
 
     /// Left empty by the system when the Focus turns off.

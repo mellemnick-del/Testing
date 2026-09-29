@@ -1,17 +1,17 @@
-# Daybook
+# Tuck
 
-**Clear your head. Close your day.**
+**Clear your head. Tuck in your day.**
 
 A calm, clean journal, notes, and reminders app for iPhone, built for working professionals and everyday parents. Get things out of your head during the day, then close out the day in two minutes at night. Your journal writes itself from what you got done.
 
-> "Daybook" and the `com.zeroday.daybook` bundle ID are placeholders. Rename them in `project.yml` whenever you settle on a name.
+> App Store listing: **Tuck: Journal, Notes & To-Do**, subtitle **Reminders & Family Chores**. The bundle ID `com.zeroday.tuck` can be changed in `project.yml` before the first upload.
 
 ## What's in v1
 
 | Tab | What it does |
 | --- | --- |
 | **Today** | Capture box, today's score, a daily journaling prompt, one tap quick add, what's due today, and your last entry. |
-| **Capture** | One box for anything on your mind. Type or dictate, and Daybook files it as a reminder (with date, list, and points), a note, or a journal line. You can switch the type before saving. |
+| **Capture** | One box for anything on your mind. Type or dictate, and Tuck files it as a reminder (with date, list, and points), a note, or a journal line. You can switch the type before saving. |
 | **Journal** | Entries grouped by month, mood tracking with emoji, search, share, edit, delete. |
 | **Notes** | Fast plain notes with pinning, search, and swipe actions. |
 | **Reminders** | Work / Family / Personal lists, due times, repeat (daily, weekdays, weekly), effort points, local notifications. |
@@ -41,7 +41,7 @@ On iOS 26 devices with Apple Intelligence, the on-device model takes a second lo
 
 - Set work hours and workdays in Settings (default Monday to Friday, 8:00 AM to 5:30 PM). Outside them, Today and the Reminders "All" list hide work items, with a one-tap Show.
 - The mode pill on Today ("Home mode · until 8:00 AM") switches modes until the next scheduled change.
-- iPhone Focus: in Settings > Focus, add a Daybook filter to any Focus and pick Work or Home. While that Focus is on, Daybook uses that mode, and a Home filter silences work reminder notifications. Each notification carries its list as `filterCriteria` for this.
+- iPhone Focus: in Settings > Focus, add a Tuck filter to any Focus and pick Work or Home. While that Focus is on, Tuck uses that mode, and a Home filter silences work reminder notifications. Each notification carries its list as `filterCriteria` for this.
 - Priority: manual switch, then Focus, then work hours.
 
 ### Points
@@ -67,7 +67,7 @@ Design choices:
 - Project generated with [XcodeGen](https://github.com/yonaskolb/XcodeGen) from `project.yml` so the repo stays clean
 
 ```
-Daybook/
+Tuck/
   App/            App entry point, notification delegate, preview data
   Models/         JournalEntry, Note, Reminder (SwiftData)
   Services/       NotificationManager (local reminders)
@@ -85,15 +85,15 @@ You need a Mac for iOS development. There is no way around this one.
 3. Clone this repo, then from the repo root:
    ```bash
    xcodegen generate
-   open Daybook.xcodeproj
+   open Tuck.xcodeproj
    ```
 4. In Xcode, pick an iPhone simulator and press **Cmd + R**.
-5. To run on your own iPhone: select the Daybook target, go to **Signing & Capabilities**, and choose your Apple ID team.
+5. To run on your own iPhone: select the Tuck target, go to **Signing & Capabilities**, and choose your Apple ID team.
 
 ## Road to the App Store
 
 1. **Apple Developer Program**: enroll at developer.apple.com ($99/year).
-2. **App icon**: drop a 1024x1024 PNG into `Resources/Assets.xcassets/AppIcon.appiconset` (no transparency).
+2. **App icon**: already in place (sunset over a page, with dark and tinted versions). Sources are in `Design/icons`.
 3. **Bundle ID and team**: set `PRODUCT_BUNDLE_IDENTIFIER` and `DEVELOPMENT_TEAM` in `project.yml`, then rerun `xcodegen generate`.
 4. **App Store Connect**: create the app record, fill in description, keywords, category (Productivity or Lifestyle), and support URL.
 5. **Privacy policy URL**: required even though no data leaves the device. A one page site is fine.

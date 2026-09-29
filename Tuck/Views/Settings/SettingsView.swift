@@ -53,7 +53,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Work and home")
                 } footer: {
-                    Text("Outside work hours, Home mode hides work reminders so work stays at work. To switch with your iPhone Focus instead, open Settings, tap Focus, pick a Focus, and add a Daybook filter.")
+                    Text("Outside work hours, Home mode hides work reminders so work stays at work. To switch with your iPhone Focus instead, open Settings, tap Focus, pick a Focus, and add a Tuck filter.")
                 }
 
                 Section("About") {
@@ -83,7 +83,7 @@ struct SettingsView: View {
                 }
                 Button("Not now", role: .cancel) {}
             } message: {
-                Text("To get a nightly reminder, allow notifications for Daybook in the Settings app.")
+                Text("To get a nightly reminder, allow notifications for Tuck in the Settings app.")
             }
         }
     }

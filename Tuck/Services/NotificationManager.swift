@@ -6,7 +6,7 @@ import UserNotifications
 /// not at launch, which App Review and users both prefer.
 @MainActor
 enum NotificationManager {
-    nonisolated static let closeOutID = "daybook.closeout"
+    nonisolated static let closeOutID = "tuck.closeout"
 
     private static var center: UNUserNotificationCenter { .current() }
 
@@ -32,7 +32,7 @@ enum NotificationManager {
         content.title = reminder.title.isEmpty ? "Reminder" : reminder.title
         if !reminder.notes.isEmpty { content.body = reminder.notes }
         content.sound = .default
-        // Lets a Daybook Focus filter silence work reminders at home.
+        // Lets a Tuck Focus filter silence work reminders at home.
         content.filterCriteria = reminder.categoryRaw
 
         let calendar = Calendar.current

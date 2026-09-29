@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-/// One box for anything on your mind. Daybook decides whether it's a
+/// One box for anything on your mind. Tuck decides whether it's a
 /// reminder, a note, or a journal line, and you can switch it before saving.
 struct CaptureView: View {
     @Environment(\.modelContext) private var context
@@ -84,7 +84,7 @@ struct CaptureView: View {
 
     private var exampleList: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Type or tap the mic on your keyboard. Daybook sorts it for you.")
+            Text("Type or tap the mic on your keyboard. Tuck sorts it for you.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             ForEach(Self.examples, id: \.self) { example in

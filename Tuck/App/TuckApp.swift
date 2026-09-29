@@ -3,7 +3,7 @@ import SwiftData
 import UserNotifications
 
 @main
-struct DaybookApp: App {
+struct TuckApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {
