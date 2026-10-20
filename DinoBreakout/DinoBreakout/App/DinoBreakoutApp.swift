@@ -2,7 +2,7 @@ import SwiftUI
 import SpriteKit
 
 @main
-struct BreachPointApp: App {
+struct DinoBreakoutApp: App {
     var body: some Scene {
         WindowGroup {
             GameView()

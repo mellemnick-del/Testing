@@ -1,10 +1,12 @@
-# Breach Point
+# Dino Breakout
 
 **The paddocks are open. Hold the line until the choppers arrive.**
 
+> App Store listing: **Dino Breakout: Tower Defense**, subtitle **Build the maze. Stop the rex.** Leading with "Dino" and "Tower Defense" in the name puts the two terms players actually search for in the field Apple weighs most (30 character limit).
+
 A mazing tower defense game for iPhone. The park's power has failed and the dinosaurs are loose. You're head of park security. There are no fixed paths: every fence and tower you place is a wall, and the dinos always take the shortest route left through your maze to the evac helipad. Build a long, twisting maze and line it with firepower.
 
-> Working title. Inspired by the "park gone wrong" genre, with all original names and art. No Jurassic Park names, logos, characters, or music.
+> Inspired by the "park gone wrong" genre, with all original names and art. No Jurassic Park names, logos, characters, or music.
 
 ## How to play
 
@@ -39,13 +41,13 @@ Emoji are placeholder art so we can tune gameplay before drawing sprites.
 ## Run it on your Mac
 
 1. Install XcodeGen if you don't have it: `brew install xcodegen`
-2. From this `BreachPoint` folder:
+2. From this `DinoBreakout` folder:
    ```bash
    xcodegen generate
-   open BreachPoint.xcodeproj
+   open DinoBreakout.xcodeproj
    ```
 3. Pick an iPhone simulator and press **Cmd + R**.
-4. To play on your own iPhone: select the BreachPoint target, go to **Signing & Capabilities**, and choose your Apple ID team.
+4. To play on your own iPhone: select the DinoBreakout target, go to **Signing & Capabilities**, and choose your Apple ID team.
 
 ## Tech
 
@@ -53,7 +55,7 @@ Emoji are placeholder art so we can tune gameplay before drawing sprites.
 - Zero third party dependencies.
 
 ```
-BreachPoint/
+DinoBreakout/
   App/   App entry point and the SwiftUI view hosting the game
   Game/
     GameScene.swift   Game loop, input, waves, combat, effects
